@@ -7,6 +7,10 @@
     - qemu-user-static
     state: present
 
+- name: Remove builder (if existing)
+  shell: "DOCKER_CLI_EXPERIMENTAL=enabled docker buildx rm builder"
+  ignore_errors: yes
+
 - name: Create builder
   shell: "DOCKER_CLI_EXPERIMENTAL=enabled docker buildx create --name builder"
   register: docker_builder
