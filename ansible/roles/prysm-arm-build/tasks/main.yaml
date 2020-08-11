@@ -48,7 +48,7 @@
   lineinfile:
     dest: "{{ build_path }}/arm64/prysm-scratch/build_prysm.sh"
     regexp: "^VERSION_TAG="
-    line: "VERSION_TAG=HEAD-{{ ls_remote.stdout.split(' ')[0][:6] }}"
+    line: "VERSION_TAG=HEAD-{{ ls_remote.stdout.split('\t')[0][:6] }}"
 
 - name: Adapting DOCKER_REPOSITORY
   lineinfile:
