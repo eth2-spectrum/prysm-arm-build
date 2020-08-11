@@ -39,7 +39,7 @@
   register: ls_remote
 
 - name: Build and push docker images
-  shell: "./build_prysm.sh PROCESSNAME={{ item }} COMMITHASH={{ ls_remote.stdout.split(' ')[0]|trim }} VERSION_TAG=HEAD-{{ ls_remote.stdout.split(' ')[0][:6] }} DOCKER_REPOSITORY={{ docker_repository }} HASHDATE={{ ansible_date_time.date }}"
+  shell: "./build_prysm.sh {{ item }} COMMITHASH={{ ls_remote.stdout.split(' ')[0]|trim }} VERSION_TAG=HEAD-{{ ls_remote.stdout.split(' ')[0][:6] }} DOCKER_REPOSITORY={{ docker_repository }} HASHDATE={{ ansible_date_time.date }}"
   args:
     chdir: "{{ build_path }}/arm64/prysm-scratch"
   with_items:
