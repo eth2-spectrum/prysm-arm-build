@@ -1,0 +1,5 @@
+---
+- hosts: all
+  
+  roles:
+  - prysm-build-hook

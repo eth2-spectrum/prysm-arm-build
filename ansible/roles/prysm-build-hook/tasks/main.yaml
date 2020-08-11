@@ -1,0 +1,16 @@
+---
+- name: Latest Prysm commit hash
+  shell: "git ls-remote https://github.com/prysmaticlabs/prysm.git | grep HEAD"
+  register: ls_remote
+
+- name: Check for latest build
+  lineinfile:
+    dest: "{{ latest_build_commithash_file }}"
+    line: "{{ ls_remote.stdout.split('\t')[0]|trim }}"
+    create: yes
+  register: commithash
+
+- name: Fail if nothing new
+  fail:
+    msg: "No new commits detected!"
+  when: not commithash.changed
