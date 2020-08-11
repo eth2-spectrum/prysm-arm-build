@@ -2,9 +2,9 @@
 - name: Install required packages
   package:
     name:
-	- qemu
-	- binfmt-support
-	- qemu-user-static
+    - qemu
+    - binfmt-support
+    - qemu-user-static
     state: present
 
 - name: Create builder
@@ -34,7 +34,7 @@
 - name: Build and push docker images
   shell: "./build_prysm PROCESSNAME={{ item }} COMMITHASH={{ ls_remote|split(' ')[0] }} VERSION_TAG=HEAD-{{ ls_remote|split(' ')[0][:6] }} DOCKER_REPOSITORY={{ docker_repository }} HASHDATE={{ ansible_date_time.date }}"
   args:
-    chdir: "{{ build_path}}/arm64/prysm-scratch"
+    chdir: "{{ build_path }}/arm64/prysm-scratch"
   with_items:
   - beacon-chain
   - validator
