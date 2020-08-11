@@ -9,12 +9,15 @@
 
 - name: Create builder
   shell: "DOCKER_CLI_EXPERIMENTAL=enabled docker buildx create --name builder"
+  register: docker_builder
 
 - name: Use builder
   shell: "DOCKER_CLI_EXPERIMENTAL=enabled docker buildx use builder"
+  when: docker_builder.changed
 
 - name: Inspect builder
   shell: "DOCKER_CLI_EXPERIMENTAL=enabled docker buildx inspect --bootstrap builder"
+  when: docker_builder.changed
 
 - name: Clone build repo
   git:
