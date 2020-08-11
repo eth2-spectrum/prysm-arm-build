@@ -42,7 +42,7 @@
   lineinfile:
     dest: "{{ build_path }}/arm64/prysm-scratch/build_prysm.sh"
     regexp: "^COMMITHASH="
-    line: "COMMITHASH={{ ls_remote.stdout.split(' ')[0]|trim }}"
+    line: "COMMITHASH={{ ls_remote.stdout.split('\t')[0]|trim }}"
 
 - name: Adapting VERSION_TAG
   lineinfile:
