@@ -1,0 +1,41 @@
+---
+- name: Install required packages
+  package:
+    name:
+	- qemu
+	- binfmt-support
+	- qemu-user-static
+    state: present
+
+- name: Create builder
+  shell: "DOCKER_CLI_EXPERIMENTAL=enabled docker buildx create --name builder"
+
+- name: Use builder
+  shell: "DOCKER_CLI_EXPERIMENTAL=enabled docker buildx use builder"
+
+- name: Inspect builder
+  shell: "DOCKER_CLI_EXPERIMENTAL=enabled docker buildx inspect --bootstrap builder"
+
+- name: Clone build repo
+  git:
+    repo: "https://github.com/eth2-spectrum/prysm-arm-build.git"
+    dest: "{{ build_path }}"
+    force: yes
+
+- name: Login Dockerhub
+  docker_login:
+    username: "{{ dockerhub_username }}"
+    password: "{{ dockerhub_password }}"
+
+- name: Latest Prysm commit hash
+  shell: "git ls-remote https://github.com/prysmaticlabs/prysm.git | grep HEAD"
+  register: ls_remote
+
+- name: Build and push docker images
+  shell: "./build_prysm PROCESSNAME={{ item }} COMMITHASH={{ ls_remote|split(' ')[0] }} VERSION_TAG=HEAD-{{ ls_remote|split(' ')[0][:6] }} DOCKER_REPOSITORY={{ docker_repository }} HASHDATE={{ ansible_date_time.date }}"
+  args:
+    chdir: "{{ build_path}}/arm64/prysm-scratch"
+  with_items:
+  - beacon-chain
+  - validator
+  - slasher
