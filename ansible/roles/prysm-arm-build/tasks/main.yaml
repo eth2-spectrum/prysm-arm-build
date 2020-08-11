@@ -82,3 +82,12 @@
   - beacon-chain
   - validator
   - slasher
+
+- name: Cleanup - Remove images
+  docker_image:
+    state: absent
+    name: "{{ docker_repository }}/prysm-{{ item }}-arm64:HEAD-{{ ls_remote.stdout.split('\t')[0][:6] }}"
+  with_items:
+  - beacon-chain
+  - validator
+  - slasher
