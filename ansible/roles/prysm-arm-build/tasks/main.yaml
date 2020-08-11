@@ -70,3 +70,15 @@
   - beacon-chain
   - validator
   - slasher
+
+- name: Add tag latest to images
+  docker_image:
+    name: "{{ docker_repository }}/prysm-{{ item }}-arm64:HEAD-{{ ls_remote.stdout.split('\t')[0][:6] }}"
+    repository: "{{ docker_repository }}/prysm-{{ item }}-arm64:latest"
+    force_tag: yes
+    source: pull
+    push: yes
+  with_items:
+  - beacon-chain
+  - validator
+  - slasher
