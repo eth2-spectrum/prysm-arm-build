@@ -60,7 +60,7 @@
   lineinfile:
     dest: "{{ build_path }}/arm64/prysm-scratch/build_prysm.sh"
     regexp: "^HASHDATE="
-    line: "HASHDATE={{ ansible_date_time.date }}"
+    line: "HASHDATE={{ '%Y-%m-%d'|strftime(ansible_date_time.epoch|int - (2*86400)) }}"
 
 - name: Build and push docker images
   shell: "./build_prysm.sh {{ item }}"
