@@ -24,7 +24,7 @@ DOCKER_CLI_EXPERIMENTAL=enabled docker \
   --progress plain \
   --build-arg PRYSM_VERSION=${PRYSM_VERSION} \
   --build-arg PROCESSNAME=${PROCESSNAME} \
-  -t ${DOCKER_REPOSITORY}/prysm-${PROCESSNAME}-arm64-bin:${PRYSM_VERSION} \
+  -t ${DOCKER_REPOSITORY}/prysm-${PROCESSNAME}-arm64:${PRYSM_VERSION} \
   -f Dockerfile \
   --push \
   .
