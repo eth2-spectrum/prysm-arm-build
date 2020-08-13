@@ -34,21 +34,17 @@
     username: "{{ dockerhub_username }}"
     password: "{{ dockerhub_password }}"
 
-- name: Latest Prysm commit hash
-  shell: "git ls-remote https://github.com/prysmaticlabs/prysm.git | grep HEAD"
-  register: ls_remote
+- name: Prysm relase tags
+  shell: "git tag --sort=committerdate | grep v"
+  args:
+    chdir: "{{ prysm_path }}"
+  register: version_tags
 
-- name: Adapting COMMITHASH
+- name: Adapting PRYSM_VERSION
   lineinfile:
-    dest: "{{ build_path }}/arm64/prysm-scratch/build_prysm.sh"
-    regexp: "^COMMITHASH="
-    line: "COMMITHASH={{ ls_remote.stdout.split('\t')[0]|trim }}"
-
-- name: Adapting VERSION_TAG
-  lineinfile:
-    dest: "{{ build_path }}/arm64/prysm-scratch/build_prysm.sh"
-    regexp: "^VERSION_TAG="
-    line: "VERSION_TAG=HEAD-{{ ls_remote.stdout.split('\t')[0][:6] }}"
+    dest: "{{ build_path }}/arm64/prysm-bin/build_prysm.sh"
+    regexp: "^PRYSM_VERSION="
+    line: "PRYSM_VERSION={{ version_tags.stdout.split('\n')|last }}"
 
 - name: Adapting DOCKER_REPOSITORY
   lineinfile:
@@ -56,16 +52,10 @@
     regexp: "^DOCKER_REPOSITORY="
     line: "DOCKER_REPOSITORY={{ docker_repository }}"
 
-- name: Adapting HASHDATE
-  lineinfile:
-    dest: "{{ build_path }}/arm64/prysm-scratch/build_prysm.sh"
-    regexp: "^HASHDATE="
-    line: "HASHDATE={{ '%Y-%m-%d'|strftime(ansible_date_time.epoch|int - (2*86400)) }}"
-
 - name: Build and push docker images
   shell: "./build_prysm.sh {{ item }}"
   args:
-    chdir: "{{ build_path }}/arm64/prysm-scratch"
+    chdir: "{{ build_path }}/arm64/prysm-bin"
   with_items:
   - beacon-chain
   - validator
