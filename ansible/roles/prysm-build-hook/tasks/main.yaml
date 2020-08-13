@@ -1,16 +1,24 @@
 ---
-- name: Latest Prysm commit hash
-  shell: "git ls-remote https://github.com/prysmaticlabs/prysm.git | grep HEAD"
-  register: ls_remote
+- name: Clone prysmaticlabs/prysm
+  git:
+    repo: "https://github.com/prysmaticlabs/prysm.git"
+    dest: "{{ prysm_path }}"
+    force: yes
 
-- name: Check for latest build
+- name: Prysm relase tags
+  shell: "git tag --sort=committerdate | grep v"
+  args:
+    chdir: "{{ prysm_path }}"
+  register: version_tags
+
+- name: Check for latest release
   lineinfile:
-    dest: "{{ latest_build_commithash_file }}"
-    line: "{{ ls_remote.stdout.split('\t')[0]|trim }}"
+    dest: "{{ latest_build_release_file }}"
+    line: "{{ version_tags.stdout.split('\n')|last }}"
     create: yes
-  register: commithash
+  register: release_tag
 
 - name: Fail if nothing new
   fail:
-    msg: "No new commits detected!"
-  when: not commithash.changed
+    msg: "No new release detected!"
+  when: not release_tag.changed
