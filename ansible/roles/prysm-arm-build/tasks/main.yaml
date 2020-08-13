@@ -63,7 +63,7 @@
 
 - name: Add tag latest to images
   docker_image:
-    name: "{{ docker_repository }}/prysm-{{ item }}-arm64:HEAD-{{ ls_remote.stdout.split('\t')[0][:6] }}"
+    name: "{{ docker_repository }}/prysm-{{ item }}-arm64:{{ version_tags.stdout.split('\n')|last }}"
     repository: "{{ docker_repository }}/prysm-{{ item }}-arm64:latest"
     force_tag: yes
     source: pull
@@ -76,7 +76,7 @@
 - name: Cleanup - Remove images
   docker_image:
     state: absent
-    name: "{{ docker_repository }}/prysm-{{ item }}-arm64:HEAD-{{ ls_remote.stdout.split('\t')[0][:6] }}"
+    name: "{{ docker_repository }}/prysm-{{ item }}-arm64:{{ version_tags.stdout.split('\n')|last }}"
   with_items:
   - beacon-chain
   - validator
