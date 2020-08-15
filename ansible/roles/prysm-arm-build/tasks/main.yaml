@@ -35,7 +35,7 @@
     password: "{{ dockerhub_password }}"
 
 - name: Prysm relase tags
-  shell: "git tag --sort=committerdate | grep v"
+  shell: "git tag --sort=committerdate | grep {{ version_tag_filter }}"
   args:
     chdir: "{{ prysm_path }}"
   register: version_tags
